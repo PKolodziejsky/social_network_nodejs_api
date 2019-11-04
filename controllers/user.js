@@ -3,7 +3,6 @@ const _  = require('lodash');
 const formidable = require("formidable")
 const fs = require("fs");
 
-//user & users &id etc => keywords (userById , allUsers arrow funcs)????
 //running always when userId in URL
 function userById(req,res,next,id){
 

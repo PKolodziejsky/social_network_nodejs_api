@@ -12,9 +12,9 @@ const expValid = require("express-validator");
 //cross sharing
 const cors =require("cors");
 
-//dotenv.config();
+dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI || "mongodb+srv://mwah:Pass%21%40%2345@nodeapi-ramfp.azure.mongodb.net/test?retryWrites=true&w=majority" ,
+mongoose.connect(process.env.MONGO_URI,
     { useNewUrlParser:true},{useUnifiedTopology:true}).then(() => console.log("DB connected"));
 
 mongoose.connection.on('error' , err =>{
