@@ -9,7 +9,7 @@ function createPostValidator(req,res,next){
     req.check('body',"Write a post").notEmpty();
     req.check('body' , "Post must be between 2 and 2000 characters").isLength({
         min:2,
-        max:150
+        max:2000
     });
 
     const errors = req.validationErrors();
