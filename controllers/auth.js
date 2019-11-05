@@ -29,8 +29,8 @@ function signin (req,res){
         return res.status(401).json({
             error:'User with this email does not exist. Please signup.'
 
-        });
-    }
+            });
+        }
     if(!user.authenticate(password)){
         return res.status(401).json({
             error:"Wrong password"
@@ -47,7 +47,7 @@ function signin (req,res){
     const {_id, name,email} = user;
     return res.json({token , user:{_id , name,email}})
 
-});
+    });
 
 }
 
