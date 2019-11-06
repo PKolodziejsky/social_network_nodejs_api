@@ -110,6 +110,33 @@ function deleteUser(req,res,next){
 
 }
 
+function addFollower(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$push : {followers:req.body.followId}},
+        (err,result) =>{
+            if(err){
+                res.status(400).json({
+                    error:err
+                });
+            }
+            next();
+        })
+}
+
+function addFollowing(req,res){
+    User.findByIdAndUpdate(
+        req.body.followId,
+        {$push : {following:req.body.userId}},
+        {new:true}).exec((err,result)=>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                });
+            }
+            result.salt =undefined;
+            result.passwd_hash = undefined;
+    })
+}
+
 module.exports = {
     userById,
     hasAuth,
