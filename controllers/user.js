@@ -6,7 +6,8 @@ const fs = require("fs");
 //running always when userId in URL
 function userById(req,res,next,id){
 
-    User.findById(id).exec((err,user) =>{
+    User.findById(id).populate('following','_id name').populate('followers','_id name')
+        .exec((err,user) =>{
 
         if(err || !user){
         return res.status(400).json({
@@ -110,6 +111,33 @@ function deleteUser(req,res,next){
 
 }
 
+function addFollower(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$push : {followers:req.body.followId}},
+        (err,result) =>{
+            if(err){
+                res.status(400).json({
+                    error:err
+                });
+            }
+            next();
+        })
+}
+
+function addFollowing(req,res){
+    User.findByIdAndUpdate(
+        req.body.followId,
+        {$push : {following:req.body.userId}},
+        {new:true}).exec((err,result)=>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                });
+            }
+            result.salt =undefined;
+            result.passwd_hash = undefined;
+    })
+}
+
 module.exports = {
     userById,
     hasAuth,
@@ -117,5 +145,7 @@ module.exports = {
     getUser,
     updateUser,
     deleteUser,
-    userPic
+    userPic,
+    addFollowing,
+    addFollower
 }
