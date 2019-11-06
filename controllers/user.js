@@ -144,5 +144,7 @@ module.exports = {
     getUser,
     updateUser,
     deleteUser,
-    userPic
+    userPic,
+    addFollowing,
+    addFollower
 }
