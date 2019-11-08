@@ -77,7 +77,7 @@ function postById(req,res,next,abc){
 
 function isAuthor(req,res,next){
 
-    let isAuthor = req.post && req.auth && req.post.postedBy._id == req.auth._id;
+    let isAuthor = req.post && req.auth && req.post.postedBy._id === req.auth._id;
 
     if(!isAuthor){
         return res.status(403).json({
@@ -93,8 +93,9 @@ function deletePost(req,res){
     post.remove((err,post) =>{
 
         if(err){
-            return res.status(400).json({})
-            error:err
+            return res.status(400).json({
+                error: err
+            })
         }
 
         res.json({

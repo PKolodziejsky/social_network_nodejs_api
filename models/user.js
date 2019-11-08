@@ -36,14 +36,14 @@ const userSchema = new mongoose.Schema({
         type:String,
         trim:true
     },
-    following:{
+    following:[{
         type:ObjectId,
         ref:'User'
-    },
-    followers:{
+    }],
+    followers:[{
         type:ObjectId,
         ref:'User'
-    },
+    }],
     updated:Date
 
 });

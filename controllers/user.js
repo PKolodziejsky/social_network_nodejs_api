@@ -111,8 +111,36 @@ function deleteUser(req,res,next){
 
 }
 
-function addFollower(req,res,next){
-    User.findByIdAndUpdate(req.body.userId, {$push : {followers:req.body.followId}},
+function addFollowing(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$push : {following:req.body.followId}},
+        (err,result) =>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                });
+            }
+            next();
+        })
+}
+
+function addFollower(req,res){
+    User.findByIdAndUpdate(
+        req.body.followId,
+        {$push : {followers:req.body.userId}},
+        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        .exec((err,result)=>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                });
+            }
+            result.passwd_hash = undefined;
+            result.salt = undefined;
+            res.json(result)
+    })
+}
+function removeFollowing(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$pull : {following:req.body.unfollowId}},
         (err,result) =>{
             if(err){
                 res.status(400).json({
@@ -123,20 +151,23 @@ function addFollower(req,res,next){
         })
 }
 
-function addFollowing(req,res){
+function removeFollower(req,res){
     User.findByIdAndUpdate(
-        req.body.followId,
-        {$push : {following:req.body.userId}},
-        {new:true}).exec((err,result)=>{
+        req.body.unfollowId,
+        {$pull : {followers:req.body.userId}},
+        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        .exec((err,result)=>{
             if(err){
                 return res.status(400).json({
                     error:err
                 });
             }
-            result.salt =undefined;
-            result.passwd_hash = undefined;
-    })
+            res.json(result);
+        })
 }
+
+
+
 
 module.exports = {
     userById,
@@ -147,5 +178,7 @@ module.exports = {
     deleteUser,
     userPic,
     addFollowing,
-    addFollower
+    addFollower,
+    removeFollower,
+    removeFollowing
 }
