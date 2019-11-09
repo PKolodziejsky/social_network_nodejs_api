@@ -1,8 +1,9 @@
 const express = require('express');
-const { allUsers,getUser,updateUser,deleteUser,userPic,userById } = require('../controllers/user')
+const { allUsers,getUser,updateUser,deleteUser,userPic,userById,
+    addFollowing,addFollower,removeFollower,removeFollowing,findPeople } = require('../controllers/user')
 const router = express.Router();
 const { requireSignin } = require('../controllers/auth');
-const { addFollowing,addFollower,removeFollower,removeFollowing } = require('../controllers/user');
+const {  } = require('../controllers/user');
 
 
 //for any req containing userId
@@ -18,6 +19,6 @@ router.put("/user/:userId",requireSignin,updateUser);
 router.delete("/user/:userId",requireSignin,deleteUser);
 //pic
 router.get("/user/picture/:userId",userPic);
-
+router.get('/user/discover/:userId', requireSignin,findPeople)
 
 module.exports = router;
