@@ -6,7 +6,7 @@ const fs = require("fs");
 //running always when userId in URL
 function userById(req,res,next,id){
 
-    User.findById(id).exec((err,user) =>{
+    User.findById(id).populate('following','_id name').populate('followers','_id name').exec((err,user) =>{
 
         if(err || !user){
         return res.status(400).json({
@@ -110,11 +110,11 @@ function deleteUser(req,res,next){
 
 }
 
-function addFollower(req,res,next){
-    User.findByIdAndUpdate(req.body.userId, {$push : {followers:req.body.followId}},
+function addFollowing(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$push : {following:req.body.followId}},
         (err,result) =>{
             if(err){
-                res.status(400).json({
+                return res.status(400).json({
                     error:err
                 });
             }
@@ -122,18 +122,20 @@ function addFollower(req,res,next){
         })
 }
 
-function addFollowing(req,res){
+function addFollower(req,res){
     User.findByIdAndUpdate(
         req.body.followId,
-        {$push : {following:req.body.userId}},
-        {new:true}).exec((err,result)=>{
+        {$push : {followers:req.body.userId}},
+        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        .exec((err,result)=>{
             if(err){
                 return res.status(400).json({
                     error:err
                 });
             }
-            result.salt =undefined;
             result.passwd_hash = undefined;
+            result.salt = undefined;
+            res.json(result)
     })
 }
 
