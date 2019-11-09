@@ -137,6 +137,47 @@ function addFollowing(req,res){
     })
 }
 
+function removeFollowing(req,res,next){
+    User.findByIdAndUpdate(req.body.userId, {$pull : {following:req.body.unfollowId}},
+        (err,result) =>{
+            if(err){
+                res.status(400).json({
+                    error:err
+                });
+            }
+            next();
+        })
+}
+
+function removeFollower(req,res){
+    User.findByIdAndUpdate(
+        req.body.unfollowId,
+        {$pull : {followers:req.body.userId}},
+        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        .exec((err,result)=>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                });
+            }
+            res.json(result);
+        })
+}
+
+function findPeople(req,res){
+
+    let following = req.profile.following;
+    following.push(req.profile._id)
+    User.find({_id:{$nin:following}} ,(err,users)=>{
+        if(err){
+            return res.status(400).json({
+                error:err
+            })
+        }
+        res.json(users)
+    }).select('name')
+}
+
 module.exports = {
     userById,
     hasAuth,
@@ -146,5 +187,8 @@ module.exports = {
     deleteUser,
     userPic,
     addFollowing,
-    addFollower
+    addFollower,
+     removeFollower,
+    removeFollowing,
+    findPeople
 }
