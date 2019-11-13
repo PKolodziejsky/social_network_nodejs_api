@@ -3,11 +3,12 @@ const formidable = require("formidable");
 const fs = require("fs");
 const _  = require('lodash');
 
+//only followwers
 function getPosts(req,res){
 
-    const posts = Post.find().select("_id title body").populate("postedBy","_id name").then((posts) =>res.json({
-        posts:posts
-    })).catch(err => console.log(err));
+    const posts = Post.find().populate("postedBy","_id name").select("_id title body created ")
+        .sort({created:-1})
+        .then(posts =>{res.json(posts)}).catch(err => console.log(err));
 
 }
 
@@ -30,9 +31,9 @@ function createPost(req,res) {
     req.profile.email = undefined;
     post.postedBy = req.profile;
 
-    if(files.photo){
-        post.photo =fs.readFileSync(files.photo.path);
-        post.photo.contentType(files.photo.type);
+    if(files.picture){
+        post.picture.data =fs.readFileSync(files.picture.path);
+        post.picture.contentType = files.picture.type;
     }
 
     post.save((err,result) =>{
@@ -41,9 +42,9 @@ function createPost(req,res) {
                 error:err
             })
         }
-        res.json({ result });
-})
-});
+        res.json(result);
+    })
+    });
 }
 
 function postsByUser(req,res){
@@ -57,13 +58,14 @@ function postsByUser(req,res){
             })
 
         }
-        res.status(200).json({posts});
+        res.status(200).json(posts);
 });
 }
 
-function postById(req,res,next,abc){
+function postById(req,res,next,id){
 
-    Post.findById(abc).populate("postedBy" , "_id name").exec((err,post) =>{
+    Post.findById(id).populate("postedBy" , "_id name").select('_id title body created picture')
+        .exec((err,post) =>{
 
         if(err || !post){
         return res.status(400).json({
@@ -116,8 +118,13 @@ function updatePost (req,res,next){
                 error:err
             });
         }
-        res.json({post:post});
-})
+        res.json(post);
+    })
+}
+
+function getPicture(req,res,next){
+    res.set("Content-Type" , req.post.picture.contentType);
+    return res.send(req.post.picture.data);
 }
 
 module.exports={
@@ -127,5 +134,6 @@ module.exports={
     postById,
     isAuthor,
     deletePost,
-    updatePost
+    updatePost,
+    getPicture
 }

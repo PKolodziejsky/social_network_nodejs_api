@@ -3,7 +3,7 @@ const { allUsers,getUser,updateUser,deleteUser,userPic,userById,
     addFollowing,addFollower,removeFollower,removeFollowing,findPeople } = require('../controllers/user')
 const router = express.Router();
 const { requireSignin } = require('../controllers/auth');
-const {  } = require('../controllers/user');
+
 
 
 //for any req containing userId

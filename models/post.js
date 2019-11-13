@@ -11,12 +11,12 @@ const postSchema = mongoose.Schema({
     body:{
         type:String,
         required: true,
-        minlength: 2,
-        maxlength: 2000
+        minLength:2,
+        maxLength:2000
     },
 
-    photo:{
-        type:Buffer,
+    picture:{
+        data:Buffer,
         contentType:String
     },
 
