@@ -5,13 +5,12 @@ const _  = require('lodash');
 
 function getPosts(req,res){
 
-    const posts = Post.find().select("_id title body").populate("postedBy","_id name").then((posts) =>res.json({
-        posts:posts
-    })).catch(err => console.log(err));
+    const posts = Post.find({postedBy:req.profile.following}).select("_id title body").populate("postedBy","_id name").then(posts =>{res.json(posts)})
+    .catch(err => console.log(err));
 
 }
 
-function createPost(req,res) {
+function createPost(req,res,next) {
 
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
@@ -31,7 +30,7 @@ function createPost(req,res) {
     post.postedBy = req.profile;
 
     if(files.photo){
-        post.photo =fs.readFileSync(files.photo.path);
+        post.photo.data =fs.readFileSync(files.photo.path);
         post.photo.contentType(files.photo.type);
     }
 
@@ -61,9 +60,9 @@ function postsByUser(req,res){
 });
 }
 
-function postById(req,res,next,abc){
+function postById(req,res,next,id){
 
-    Post.findById(abc).populate("postedBy" , "_id name").exec((err,post) =>{
+    Post.findById(id).populate("postedBy" , "_id name").select('_id title body created picture').exec((err,post) =>{
 
         if(err || !post){
         return res.status(400).json({
@@ -119,6 +118,11 @@ function updatePost (req,res,next){
 })
 }
 
+function getPicture(req,res,next){
+    res.set("Content-Type" , req.post.picture.contentType);
+    return res.send(req.post.picture.data);
+}
+
 module.exports={
     getPosts,
     createPost,
@@ -126,5 +130,6 @@ module.exports={
     postById,
     isAuthor,
     deletePost,
-    updatePost
+    updatePost,
+    getPicture
 }
