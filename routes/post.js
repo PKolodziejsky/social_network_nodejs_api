@@ -10,13 +10,12 @@ router.param("userId" , userById);
 // -||- postId
 router.param("postId" , postById);
 
-router.get("/posts",requireSignin,getPosts);
+router.get("/posts/:userId",requireSignin, getPosts);
 router.post("/post/new/:userId",requireSignin,createPost, createPostValidator);
-router.get("/post/by/:userId",requireSignin,postsByUser);
+router.get("/posts/by/:userId",requireSignin,postsByUser);
 router.get('/post/picture/:postId',getPicture);
 router.put("/post/:postId",requireSignin,isAuthor ,updatePost);
 router.delete("/post/:postId",requireSignin,isAuthor ,deletePost)
-
 
 
 module.exports = router;

@@ -3,16 +3,16 @@ const formidable = require("formidable");
 const fs = require("fs");
 const _  = require('lodash');
 
-//only followwers
+//only followers
 function getPosts(req,res){
 
-    const posts = Post.find().populate("postedBy","_id name").select("_id title body created ")
+    const posts = Post.find({postedBy:req.profile.following}).populate("postedBy","_id name").select("_id title body created ")
         .sort({created:-1})
         .then(posts =>{res.json(posts)}).catch(err => console.log(err));
 
 }
 
-function createPost(req,res) {
+function createPost(req,res,next) {
 
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
@@ -21,7 +21,7 @@ function createPost(req,res) {
 
         if(err){
             return res.status(400).json({
-                error:"Image could not be uplaoded"
+                error:"Image could not be uploaded"
             })
         }
 
@@ -43,24 +43,24 @@ function createPost(req,res) {
             })
         }
         res.json(result);
-    })
+        })
     });
 }
 
-function postsByUser(req,res){
-
-    Post.find({postedBy:req.profile._id}).populate("postedBy", "_id name").sort("created")
-        .exec((err,posts) =>{
-
-        if(err){
-            return res.status(400).json({
-                error:err
-            })
-
-        }
-        res.status(200).json(posts);
-});
-}
+function postsByUser (req, res) {
+    Post.find({ postedBy: req.profile._id })
+        .populate('postedBy', '_id name')
+        .select('_id title body created')
+        .sort({created:-1})
+        .exec((err, posts) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            res.json(posts);
+        });
+};
 
 function postById(req,res,next,id){
 
