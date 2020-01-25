@@ -71,10 +71,10 @@ function postById(req,res,next,id){
         return res.status(400).json({
             error:err
         })
-    }
-    req.post = post;
-    next();
-});
+        }
+        req.post = post;
+        next();
+    });
 }
 
 function isAuthor(req,res,next){
@@ -127,6 +127,10 @@ function getPicture(req,res,next){
     return res.send(req.post.picture.data);
 }
 
+function singlePost (req,res){
+    return res.json(req.post);
+}
+
 module.exports={
     getPosts,
     createPost,
@@ -135,5 +139,6 @@ module.exports={
     isAuthor,
     deletePost,
     updatePost,
-    getPicture
+    getPicture,
+    singlePost
 }

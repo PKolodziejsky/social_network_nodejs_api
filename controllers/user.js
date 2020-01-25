@@ -10,14 +10,14 @@ function userById(req,res,next,id){
         .exec((err,user) =>{
 
         if(err || !user){
-        return res.status(400).json({
-            error:'User not found'
-        })
-    }
-    //executed whenever userId is used and user (found by User model) => req.profile
-    req.profile =user;
-    next();
-});
+            return res.status(400).json({
+                error:'User not found'
+            })
+        }
+        //executed whenever userId is used and user (found by User model) => req.profile
+        req.profile =user;
+        next();
+    });
 
 }
 
@@ -61,8 +61,8 @@ function updateUser(req,res,next){
             });
         }
 
-        let user = req.profile
-        user = _.extend(user, fields)
+        let user = req.profile;
+        user = _.extend(user, fields);
         user.updated = Date.now();
 
         if (files.picture) {
