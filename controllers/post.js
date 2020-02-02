@@ -20,7 +20,7 @@ function createPost(req,res,next) {
 
         if(err){
             return res.status(400).json({
-                error:"Image could not be uplaoded"
+                error:"Image could not be uploaded."
             })
         }
 
