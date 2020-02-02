@@ -79,11 +79,11 @@ function postById(req,res,next,id){
 
 function isAuthor(req,res,next){
 
-    let isAuthor = req.post && req.auth && req.post.postedBy._id === req.auth._id;
+    let isAuthor = req.post && req.auth && req.post.postedBy._id == req.auth._id;
 
     if(!isAuthor){
         return res.status(403).json({
-            error:"Unauthorized. You are not the author of this post"
+            error:"Unauthorized. You are not the author of this post."
         });
     }
     next();
@@ -108,17 +108,30 @@ function deletePost(req,res){
 
 function updatePost (req,res,next){
 
-    let post = req.post;
-    post = _.extend(post,req.body);
-    post.updated = Date.now();
-    post.save((err) =>{
-
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true
+    form.parse(req,(err,fields,files) =>{
         if(err){
             return res.status(400).json({
-                error:err
-            });
+                error:"Photo could not be uploaded."
+            })
         }
-        res.json(post);
+        let post = req.post;
+        post = _.extend(post,fields);
+        post.updated = Date.now();
+
+        if(files.picture){
+            post.picture.data = fs.readFileSync(files.picture.path);
+            post.picture.contentType = files.picture.type;
+        }
+        post.save((err,result)=>{
+            if(err){
+                return res.status(400).json({
+                    error:err
+                })
+            }
+            res.json(post);
+        })
     })
 }
 

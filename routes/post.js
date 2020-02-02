@@ -13,11 +13,12 @@ router.param("postId" , postById);
 router.get("/posts/:userId",requireSignin, getPosts);
 router.post("/post/new/:userId",requireSignin,createPost, createPostValidator);
 router.get("/posts/by/:userId",requireSignin,postsByUser);
+router.delete("/post/:postId",requireSignin,isAuthor ,deletePost);
+router.put("/post/:postId",requireSignin,isAuthor ,updatePost);
 router.get("/post/:postId",singlePost);
 router.get('/post/picture/:postId',getPicture);
 
-router.put("/post/:postId",requireSignin,isAuthor ,updatePost);
-router.delete("/post/:postId",requireSignin,isAuthor ,deletePost);
+
 
 
 module.exports = router;
