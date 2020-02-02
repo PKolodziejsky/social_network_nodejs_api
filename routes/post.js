@@ -5,18 +5,18 @@ const router = express.Router();
 const { requireSignin } = require('../controllers/auth');
 const { userById } = require('../controllers/user');
 
-//for any req containing userId
-router.param("userId" , userById);
-// -||- postId
-router.param("postId" , postById);
+// any route containing :userId, our app will first execute userById()
+router.param('userId', userById);
+// any route containing :postId, our app will first execute postById()
+router.param('postId', postById);
 
 router.get("/posts/:userId",requireSignin, getPosts);
 router.post("/post/new/:userId",requireSignin,createPost, createPostValidator);
 router.get("/posts/by/:userId",requireSignin,postsByUser);
 router.delete("/post/:postId",requireSignin,isAuthor ,deletePost);
 router.put("/post/:postId",requireSignin,isAuthor ,updatePost);
-router.get("/post/:postId",singlePost);
-router.get('/post/picture/:postId',getPicture);
+router.get("/post/:postId", singlePost);
+router.get('/post/picture/:postId', getPicture);
 
 
 
