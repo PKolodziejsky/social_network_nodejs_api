@@ -22,7 +22,7 @@ function userById(req,res,next,id){
 
 function hasAuth(req,res,next){
     //req.auth added in express jwt authentication
-    const authorized = req.profile && req.auth && req.profile._id === req.auth._id;
+    const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
     if(!authorized){
         return res.status(403).json({
             error:"User is not authorized to perform this action"
@@ -38,7 +38,7 @@ function allUsers(req,res){
                 error:err
             })
         }
-        return res.json(users);
+        res.json(users);
     }).select("name created")
 }
 
@@ -126,7 +126,7 @@ function addFollower(req,res){
     User.findByIdAndUpdate(
         req.body.followId,
         {$push : {followers:req.body.userId}},
-        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        {new:true}).populate('following','_id name').populate('followers',' _id name')
         .exec((err,result)=>{
             if(err){
                 return res.status(400).json({
@@ -155,13 +155,15 @@ function removeFollower(req,res){
     User.findByIdAndUpdate(
         req.body.unfollowId,
         {$pull : {followers:req.body.userId}},
-        {new:true}).populate('followers','_id name').populate('following',' _id name')
+        {new:true}).populate('following','_id name').populate('followers',' _id name')
         .exec((err,result)=>{
             if(err){
                 return res.status(400).json({
                     error:err
                 });
             }
+            result.passwd_hash = undefined;
+            result.salt = undefined;
             res.json(result);
         })
 }

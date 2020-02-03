@@ -7,7 +7,7 @@ const { addFollowing,addFollower,removeFollower,removeFollowing,findPeople } = r
 //for any req containing userId
 router.param("userId" , userById);
 //following
-router.put('/user/follow',requireSignin,addFollower,addFollowing)
+router.put('/user/follow',requireSignin,addFollowing,addFollower)
 router.put('/user/unfollow',requireSignin,removeFollowing,removeFollower);
 
 router.get("/users",requireSignin,allUsers);
